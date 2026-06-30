@@ -18,7 +18,8 @@ Regra de negócio central: todo lead enviado pelo formulário público vira um c
 - **Frontend**: Vue 3 (Composition API) + Vite + Pinia (gerenciamento de estado) — deploy no Vercel
 - **Backend**: FastAPI (Python) + SQLModel/SQLAlchemy — deploy no Railway
 - **Banco**: PostgreSQL (produção)
-- **Imagens das figurinhas**: Cloudflare R2 como fonte principal. Um pequeno conjunto de imagens (placeholder/fallback) também vive em `/frontend/public/cards` para garantir que a vitrine nunca quebre caso o bucket fique indisponível.
+- **Catálogo de figurinhas**: JSON estático em `/frontend/src/data/figurinhas.json`, importado diretamente no frontend. Não há endpoint de API nem tabela no banco para figurinhas.
+- **Imagens das figurinhas**: arquivos estáticos em `/frontend/public/cards`, servidos pelo próprio frontend.
 - **Estrutura**: monorepo (`/frontend` + `/backend`) em um único repositório, orquestrado via `docker-compose.yml` na raiz.
 
 Não sugerir troca de stack, framework ou banco sem que eu peça explicitamente.
@@ -36,11 +37,12 @@ Não sugerir troca de stack, framework ou banco sem que eu peça explicitamente.
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
+│   │   ├── data/          # catálogo estático de figurinhas
 │   │   ├── views/
 │   │   ├── stores/        # Pinia, um store por domínio (leads, auth, kanban)
 │   │   ├── router/
 │   │   └── services/      # chamadas à API
-│   └── public/cards/      # fallback estático de imagens
+│   └── public/cards/      # imagens estáticas das figurinhas
 └── backend/
     ├── app/
     │   ├── models/
@@ -84,7 +86,8 @@ Qualquer mudança nessa lógica, no schema de `Lead`/`Vendedor`, ou na forma de 
 - Alterar o schema do banco de dados
 - Modificar a lógica do round robin
 - Adicionar dependências novas sem justificar a necessidade
-- Remover o fallback estático de imagens
+- Criar endpoint de API ou tabela de banco para figurinhas sem discutir antes
+- Remover o catálogo estático em `/frontend/src/data/figurinhas.json` ou as imagens locais em `/frontend/public/cards`
 
 ## Fluxo de trabalho esperado
 
@@ -95,13 +98,13 @@ Antes de implementar qualquer tarefa não trivial, descrever em poucos bullets o
 Criar e manter um `.gitignore` na raiz cobrindo, no mínimo:
 
 - Dependências: `node_modules/`, `__pycache__/`, `.venv/`, `*.pyc`
-- Variáveis de ambiente e segredos: `.env`, `.env.local`, `.env.*.local`, chaves de API, credenciais do Cloudflare R2
+- Variáveis de ambiente e segredos: `.env`, `.env.local`, `.env.*.local`, chaves de API e credenciais externas
 - Builds: `dist/`, `build/`, `.vite/`
 - Banco local: `*.sqlite3`, `*.db`
 - Arquivos de IDE/SO: `.vscode/`, `.idea/`, `.DS_Store`
 - Logs: `*.log`
 
-Nunca commitar valores reais de variáveis sensíveis (chaves do R2, secret de JWT, string de conexão do banco). Sempre fornecer um `.env.example` com os nomes das variáveis e valores fictícios, para o avaliador saber o que precisa configurar.
+Nunca commitar valores reais de variáveis sensíveis (chaves de API, secret de JWT, string de conexão do banco). Sempre fornecer um `.env.example` com os nomes das variáveis e valores fictícios, para o avaliador saber o que precisa configurar.
 
 Se em algum momento eu colar uma chave ou credencial real na conversa, alertar e sugerir que seja revogada/rotacionada antes do deploy, nunca apenas adicionar ao `.gitignore` silenciosamente.
 

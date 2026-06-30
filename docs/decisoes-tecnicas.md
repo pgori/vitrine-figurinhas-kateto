@@ -34,21 +34,24 @@
 
 **Motivo**: facilita a avaliação (um único `git clone` e `docker-compose up` sobem o projeto inteiro), mantém o histórico de commits unificado mostrando a evolução de frontend e backend lado a lado, e simplifica a documentação. Deploy separado (Vercel para frontend, Railway para backend) continua possível a partir de subpastas do mesmo repositório, então não há perda de flexibilidade de deploy.
 
-## 5. Armazenamento de imagens: Cloudflare R2 + fallback estático
+## 5. Catálogo de figurinhas: JSON estático no frontend
 
 **Alternativas consideradas**:
-- Apontar diretamente para URLs de imagens do site gwent.one (hotlinking).
-- Servir todas as imagens como assets estáticos do frontend.
+- Criar endpoint de API e tabela no banco para servir o catálogo.
+- Usar um bucket externo para armazenar o catálogo e/ou as imagens.
+- Manter o catálogo e as imagens como arquivos estáticos do frontend.
 
-**Decisão**: Cloudflare R2 como fonte principal das imagens das figurinhas, com um pequeno subconjunto de imagens também presente em `/frontend/public/cards` como fallback.
+**Decisão**: o catálogo de figurinhas é um JSON estático em `/frontend/src/data/figurinhas.json`, importado diretamente pelo frontend. As imagens correspondentes ficam em `/frontend/public/cards`. Não existe endpoint de API nem tabela no banco para figurinhas.
 
-**Motivo**: hotlinking para gwent.one foi descartado por risco de quebra em produção (bloqueio por referer/CORS, mudança de URL, indisponibilidade fora do nosso controle) e por não demonstrar autonomia sobre a própria infraestrutura. Servir todas as imagens como assets estáticos aumentaria o tamanho do repositório desnecessariamente. R2 foi escolhido por não cobrar taxas de egress (diferente de S3) e por ser compatível com a API S3, mantendo a integração simples. O fallback estático local existe como rede de segurança caso o bucket fique temporariamente indisponível, sem precisar duplicar todo o catálogo de imagens.
+**Motivo**: o catálogo é fixo e pequeno, sem necessidade de CRUD, painel administrativo ou atualização dinâmica em produção. Modelar isso no banco e expor via API adicionaria complexidade sem benefício prático para o escopo atual. Manter o catálogo no frontend também elimina dependência externa de bucket, reduz pontos de falha e deixa as imagens versionadas junto com a vitrine. Essa abordagem é consistente com o restante do conteúdo estático da landing page: os dados usados apenas para apresentação vivem no frontend, enquanto o backend fica focado em leads, autenticação e kanban.
 
 ## 6. Distribuição round robin: persistência e concorrência
 
-**Decisão**: o índice do próximo vendedor na fila round robin é persistido no banco de dados (não mantido em memória), garantindo que a distribuição sobreviva a reinícios do servidor e funcione corretamente em ambientes com múltiplas instâncias.
+**Decisão**: o índice do próximo vendedor na fila round robin é persistido no banco de dados (não mantido em memória), garantindo que a distribuição sobreviva a reinícios do servidor e funcione corretamente em ambientes com múltiplas instâncias. A implementação usa uma tabela `round_robin_state` com um registro singleton (`id = 1`) e o campo `next_seller_order`, que aponta para a próxima posição da fila.
 
-**Motivo**: manter o estado do round robin apenas em memória faria a distribuição "resetar" a cada deploy ou reinício, e quebraria em cenários com mais de uma instância do backend rodando simultaneamente (cada instância teria seu próprio contador). Persistir em banco resolve ambos os problemas. Para evitar condições de corrida em caso de requisições simultâneas, [a definir na implementação: usar transação com lock a nível de linha / constraint de unicidade — detalhar aqui assim que implementado].
+**Motivo**: manter o estado do round robin apenas em memória faria a distribuição "resetar" a cada deploy ou reinício, e quebraria em cenários com mais de uma instância do backend rodando simultaneamente (cada instância teria seu próprio contador). Persistir em banco resolve ambos os problemas.
+
+**Concorrência**: cada criação de lead roda dentro de uma transação e bloqueia o registro singleton de `round_robin_state` com `SELECT ... FOR UPDATE` no PostgreSQL. Enquanto uma requisição calcula o vendedor, cria o lead e avança `next_seller_order`, as demais requisições concorrentes aguardam o commit dessa transação. Isso serializa apenas o trecho crítico do round robin e evita que duas requisições leiam o mesmo índice ao mesmo tempo. Nos testes locais com SQLite, que ignora `FOR UPDATE`, a transação usa `BEGIN IMMEDIATE` para obter um lock de escrita equivalente para validar o comportamento concorrente sem depender do PostgreSQL rodando localmente.
 
 ## 7. Documentação em português (pt-BR)
 
