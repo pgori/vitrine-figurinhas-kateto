@@ -44,6 +44,22 @@ docker-compose up -d --build backend
 
 Sem esse rebuild, o pacote pode estar listado em `backend/requirements.txt`, mas ainda não estará instalado dentro do container em execução.
 
+## Deploy
+
+No deploy do backend, as migrations rodam automaticamente antes do servidor subir pelo start command da imagem Docker:
+
+```bash
+python -m alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
+```
+
+Isso usa a variável `PORT` injetada pelo Railway em produção e cai para `8000` quando ela não estiver definida. Não é necessário rodar migrations manualmente no ambiente de produção.
+
+Em desenvolvimento local, quando precisar aplicar migrations manualmente, use o container do backend:
+
+```bash
+docker-compose exec backend alembic upgrade head
+```
+
 ## Como testar
 
 Backend:
