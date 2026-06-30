@@ -60,6 +60,8 @@ Em desenvolvimento local, quando precisar aplicar migrations manualmente, use o 
 docker-compose exec backend alembic upgrade head
 ```
 
+No deploy do frontend na Vercel, o arquivo `frontend/vercel.json` configura um rewrite de todas as rotas para `index.html`. Isso é necessário para o Vue Router funcionar em produção: sem esse arquivo, acessar rotas diretamente pela URL, como `/login` ou `/kanban`, retornaria 404 porque a Vercel tentaria localizar um arquivo físico para a rota.
+
 ## Como testar
 
 Backend:
