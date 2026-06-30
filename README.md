@@ -67,3 +67,7 @@ Para parar os serviços:
 ```bash
 docker-compose down
 ```
+
+## Créditos e Aviso Legal
+
+As imagens utilizadas neste projeto pertencem à CD Projekt Red (Gwent: The Witcher Card Game) e foram obtidas em gwent.one. Este projeto foi desenvolvido exclusivamente para fins educacionais como parte de um processo seletivo, sem qualquer intenção comercial.

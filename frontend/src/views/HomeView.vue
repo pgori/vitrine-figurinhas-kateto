@@ -43,7 +43,15 @@ import figurinhas from "@/data/figurinhas.json";
   </main>
 
   <footer class="site-footer">
-    <p>Vitrine de Figurinhas Kateto</p>
-    <span>Gwent, ouro e bons pactos comerciais.</span>
+    <div class="site-footer__brand">
+      <p>Vitrine de Figurinhas Kateto</p>
+      <span>Gwent, ouro e bons pactos comerciais.</span>
+    </div>
+    <p class="site-footer__legal">
+      Este é um projeto fictício criado para fins educacionais. As imagens das
+      cartas são propriedade da CD Projekt Red e foram obtidas em gwent.one.
+      Gwent: The Witcher Card Game é marca registrada da CD Projekt Red. Este
+      projeto não possui fins comerciais ou lucrativos.
+    </p>
   </footer>
 </template>

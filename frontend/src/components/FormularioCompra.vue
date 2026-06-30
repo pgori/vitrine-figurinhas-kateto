@@ -57,7 +57,7 @@ function validateForm() {
         :value="form.name"
         type="text"
         autocomplete="name"
-        placeholder="Geralt de Rívia"
+        placeholder="Seu nome"
         @input="updateTextField('name', $event)"
       />
       <small v-if="errors.name">{{ errors.name }}</small>
