@@ -260,11 +260,8 @@ h3 {
 }
 
 .site-footer {
-  display: flex;
+  display: grid;
   width: min(1180px, calc(100% - 2rem));
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
   gap: 0.75rem;
   margin: 0 auto;
   border-top: 1px solid rgba(201, 168, 76, 0.2);
@@ -274,9 +271,27 @@ h3 {
 
 .site-footer p {
   margin: 0;
+}
+
+.site-footer__brand {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.site-footer__brand p {
   color: #e8e0d0;
   font-family: Cinzel, Georgia, serif;
   font-weight: 700;
+}
+
+.site-footer__legal {
+  max-width: 860px;
+  color: rgba(232, 224, 208, 0.48);
+  font-size: 0.78rem;
+  line-height: 1.55;
 }
 
 .purchase-page {
@@ -529,8 +544,19 @@ h3 {
   border: 1px solid rgba(232, 224, 208, 0.12);
   border-radius: 6px;
   background: #0d0d13;
+  cursor: pointer;
   padding: 0.9rem;
   box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.22);
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.kanban-card:hover {
+  border-color: rgba(201, 168, 76, 0.38);
+  background: #15151f;
+  transform: translateY(-1px);
 }
 
 .kanban-card h3 {
