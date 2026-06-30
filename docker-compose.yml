@@ -26,6 +26,10 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:-postgresql+psycopg://${POSTGRES_USER:-vitrine_user}:${POSTGRES_PASSWORD:-vitrine_password}@db:5432/${POSTGRES_DB:-vitrine_figurinhas}}
       ENVIRONMENT: development
+      BACKEND_AUTH_USERNAME: ${BACKEND_AUTH_USERNAME:-admin}
+      BACKEND_AUTH_PASSWORD: ${BACKEND_AUTH_PASSWORD:-admin}
+      BACKEND_TOKEN_SECRET: ${BACKEND_TOKEN_SECRET:-dev-secret-change-me}
+      BACKEND_TOKEN_TTL_SECONDS: ${BACKEND_TOKEN_TTL_SECONDS:-28800}
     ports:
       - "8000:8000"
     volumes:
