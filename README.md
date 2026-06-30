@@ -2,7 +2,7 @@
 
 Landing page de vendas de figurinhas/cartas do universo Gwent (The Witcher 3), com backend em FastAPI, frontend em Vue 3 + Vite e banco PostgreSQL.
 
-Este scaffold inicial ainda não implementa regra de negócio. Ele apenas sobe os três serviços da stack e expõe um endpoint de saúde no backend.
+O backend expõe um endpoint de saúde e já possui a base de modelos, migrations e regra de distribuição round robin para leads.
 
 ## Requisitos
 
@@ -23,6 +23,26 @@ Serviços disponíveis:
 - Backend: `http://localhost:8000`
 - Documentação automática da API: `http://localhost:8000/docs`
 - Banco PostgreSQL: `localhost:5432`
+
+### Migrations do backend
+
+Os comandos do Alembic devem ser executados de dentro do container do backend, usando `docker-compose exec backend alembic <comando>`. Não rode esses comandos diretamente no ambiente local: a connection string usa o hostname `db`, que só é resolvido dentro da rede criada pelo Docker Compose.
+
+Exemplo para aplicar todas as migrations pendentes:
+
+```bash
+docker-compose exec backend alembic upgrade head
+```
+
+### Novas dependências Python
+
+Sempre que uma nova dependência Python for adicionada ao backend, faça rebuild da imagem para que o container reflita a mudança:
+
+```bash
+docker-compose up -d --build backend
+```
+
+Sem esse rebuild, o pacote pode estar listado em `backend/requirements.txt`, mas ainda não estará instalado dentro do container em execução.
 
 ## Como testar
 
@@ -47,4 +67,3 @@ Para parar os serviços:
 ```bash
 docker-compose down
 ```
-

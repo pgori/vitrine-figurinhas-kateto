@@ -46,9 +46,11 @@
 
 ## 6. Distribuição round robin: persistência e concorrência
 
-**Decisão**: o índice do próximo vendedor na fila round robin é persistido no banco de dados (não mantido em memória), garantindo que a distribuição sobreviva a reinícios do servidor e funcione corretamente em ambientes com múltiplas instâncias.
+**Decisão**: o índice do próximo vendedor na fila round robin é persistido no banco de dados (não mantido em memória), garantindo que a distribuição sobreviva a reinícios do servidor e funcione corretamente em ambientes com múltiplas instâncias. A implementação usa uma tabela `round_robin_state` com um registro singleton (`id = 1`) e o campo `next_seller_order`, que aponta para a próxima posição da fila.
 
-**Motivo**: manter o estado do round robin apenas em memória faria a distribuição "resetar" a cada deploy ou reinício, e quebraria em cenários com mais de uma instância do backend rodando simultaneamente (cada instância teria seu próprio contador). Persistir em banco resolve ambos os problemas. Para evitar condições de corrida em caso de requisições simultâneas, [a definir na implementação: usar transação com lock a nível de linha / constraint de unicidade — detalhar aqui assim que implementado].
+**Motivo**: manter o estado do round robin apenas em memória faria a distribuição "resetar" a cada deploy ou reinício, e quebraria em cenários com mais de uma instância do backend rodando simultaneamente (cada instância teria seu próprio contador). Persistir em banco resolve ambos os problemas.
+
+**Concorrência**: cada criação de lead roda dentro de uma transação e bloqueia o registro singleton de `round_robin_state` com `SELECT ... FOR UPDATE` no PostgreSQL. Enquanto uma requisição calcula o vendedor, cria o lead e avança `next_seller_order`, as demais requisições concorrentes aguardam o commit dessa transação. Isso serializa apenas o trecho crítico do round robin e evita que duas requisições leiam o mesmo índice ao mesmo tempo. Nos testes locais com SQLite, que ignora `FOR UPDATE`, a transação usa `BEGIN IMMEDIATE` para obter um lock de escrita equivalente para validar o comportamento concorrente sem depender do PostgreSQL rodando localmente.
 
 ## 7. Documentação em português (pt-BR)
 
