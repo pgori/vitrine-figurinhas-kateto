@@ -1,0 +1,35 @@
+# Dependências
+node_modules/
+__pycache__/
+.venv/
+*.pyc
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.secret
+*.credentials
+credentials.json
+secrets.json
+r2-credentials.*
+cloudflare-r2-credentials.*
+
+# Builds
+dist/
+build/
+.vite/
+
+# Banco local
+*.sqlite3
+*.db
+
+# IDE/SO
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+*.log
