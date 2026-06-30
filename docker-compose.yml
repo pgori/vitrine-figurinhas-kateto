@@ -30,6 +30,7 @@ services:
       BACKEND_AUTH_PASSWORD: ${BACKEND_AUTH_PASSWORD:-admin}
       BACKEND_TOKEN_SECRET: ${BACKEND_TOKEN_SECRET:-dev-secret-change-me}
       BACKEND_TOKEN_TTL_SECONDS: ${BACKEND_TOKEN_TTL_SECONDS:-28800}
+      CORS_ALLOW_ORIGINS: ${CORS_ALLOW_ORIGINS:-http://localhost:5173}
     ports:
       - "8000:8000"
     volumes:

@@ -1,0 +1,66 @@
+[
+  {
+    "id": "geralt-of-rivia",
+    "nome": "Geralt de Rívia",
+    "descricao": "O Lobo Branco, bruxo lendário e caçador de monstros.",
+    "raridade": "lendaria",
+    "preco": 49.90,
+    "imagem": "/cards/geralt-professional.png"
+  },
+  {
+    "id": "yennefer-of-vengerberg",
+    "nome": "Yennefer de Vengerberg",
+    "descricao": "Poderosa feiticeira e conselheira real, mestre da magia do caos.",
+    "raridade": "epica",
+    "preco": 39.90,
+    "imagem": "/cards/yennefer.png"
+  },
+  {
+    "id": "triss-merigold",
+    "nome": "Triss Merigold",
+    "descricao": "Feiticeira leal, especialista em magia de fogo e cura.",
+    "raridade": "rara",
+    "preco": 24.90,
+    "imagem": "/cards/triss.png"
+  },
+  {
+    "id": "ciri",
+    "nome": "Cirilla Fiona Elen Riannon",
+    "descricao": "A Criança da Profecia, portadora do Sangue Mais Antigo.",
+    "raridade": "lendaria",
+    "preco": 49.90,
+    "imagem": "/cards/ciri.png"
+  },
+  {
+    "id": "vesemir",
+    "nome": "Vesemir",
+    "descricao": "O bruxo mais velho da Escola do Lobo, mentor de Geralt.",
+    "raridade": "rara",
+    "preco": 24.90,
+    "imagem": "/cards/vesemir.png"
+  },
+  {
+    "id": "dandelion",
+    "nome": "Dandelion",
+    "descricao": "Bardo, poeta e melhor amigo de Geralt em suas aventuras.",
+    "raridade": "comum",
+    "preco": 14.90,
+    "imagem": "/cards/dandelion.png"
+  },
+  {
+    "id": "emhyr-var-emreis",
+    "nome": "Emhyr var Emreis",
+    "descricao": "Imperador de Nilfgaard, estrategista implacável.",
+    "raridade": "epica",
+    "preco": 39.90,
+    "imagem": "/cards/emhyr.png"
+  },
+  {
+    "id": "gaunter-o-dimm",
+    "nome": "Gaunter O'Dimm",
+    "descricao": "Entidade misteriosa conhecida como Master Mirror, negociador de pactos.",
+    "raridade": "lendaria",
+    "preco": 49.90,
+    "imagem": "/cards/gaunter-o-dimm.png"
+  }
+]

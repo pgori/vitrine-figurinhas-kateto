@@ -1,6 +1,9 @@
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.routers.auth import router as auth_router
@@ -10,6 +13,16 @@ from app.routers.leads import router as leads_router
 app = FastAPI(
     title="Vitrine de Figurinhas Kateto API",
     version="0.1.0",
+)
+
+cors_origins = os.getenv("CORS_ALLOW_ORIGINS", "http://localhost:5173").split(",")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[origin.strip() for origin in cors_origins if origin.strip()],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
