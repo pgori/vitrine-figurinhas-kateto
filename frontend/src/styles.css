@@ -627,7 +627,7 @@ h3 {
   transform: rotate(1deg);
 }
 
-@media (min-width: 640px) {
+@media (min-width: 641px) {
   .figurinha-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -639,7 +639,7 @@ h3 {
   }
 }
 
-@media (min-width: 960px) {
+@media (min-width: 1025px) {
   .hero-section {
     grid-template-columns: minmax(0, 1.05fr) minmax(280px, 0.95fr);
   }
