@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 
 import { useLeadsStore } from "@/stores/leads";
 
@@ -12,6 +12,44 @@ const errors = reactive({
 });
 
 const form = computed(() => leadsStore.form);
+const phoneWasBlurred = ref(false);
+const phoneDigits = computed(() => getPhoneDigits(form.value.phone));
+const formattedPhone = computed(() => formatPhone(form.value.phone));
+const hasDesiredItem = computed(() => form.value.desiredItem.trim().length > 0);
+const isNameValid = computed(() => form.value.name.trim().length >= 3);
+const isPhoneValid = computed(() => {
+  return phoneDigits.value.length === 10 || phoneDigits.value.length === 11;
+});
+const canSubmit = computed(() => {
+  return (
+    hasDesiredItem.value &&
+    isNameValid.value &&
+    isPhoneValid.value &&
+    !leadsStore.isSubmitting
+  );
+});
+
+function getPhoneDigits(value) {
+  return value.replace(/\D/g, "").slice(0, 11);
+}
+
+function formatPhone(value) {
+  const digits = getPhoneDigits(value);
+
+  if (digits.length <= 2) {
+    return digits ? `(${digits}` : "";
+  }
+
+  if (digits.length <= 6) {
+    return `(${digits.slice(0, 2)})${digits.slice(2)}`;
+  }
+
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)})${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+
+  return `(${digits.slice(0, 2)})${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
 
 function updateTextField(field, event) {
   leadsStore.updateField(field, event.target.value);
@@ -19,9 +57,19 @@ function updateTextField(field, event) {
 }
 
 function updatePhone(event) {
-  const onlyDigits = event.target.value.replace(/\D/g, "").slice(0, 11);
+  const onlyDigits = getPhoneDigits(event.target.value);
   leadsStore.updateField("phone", onlyDigits);
-  errors.phone = "";
+  errors.phone =
+    phoneWasBlurred.value && !isPhoneValid.value
+      ? "Informe um WhatsApp brasileiro com 10 ou 11 números."
+      : "";
+}
+
+function validatePhoneOnBlur() {
+  phoneWasBlurred.value = true;
+  errors.phone = isPhoneValid.value
+    ? ""
+    : "Informe um WhatsApp brasileiro com 10 ou 11 números.";
 }
 
 async function submitForm() {
@@ -37,11 +85,13 @@ async function submitForm() {
 }
 
 function validateForm() {
-  errors.name = form.value.name.trim() ? "" : "Informe seu nome.";
+  errors.name = isNameValid.value
+    ? ""
+    : "Informe seu nome com ao menos 3 caracteres.";
   errors.desiredItem = form.value.desiredItem.trim()
     ? ""
     : "Informe a figurinha desejada.";
-  errors.phone = /^\d{10,11}$/.test(form.value.phone)
+  errors.phone = isPhoneValid.value
     ? ""
     : "Informe um WhatsApp brasileiro com 10 ou 11 números.";
 
@@ -68,8 +118,8 @@ function validateForm() {
       <input
         :value="form.desiredItem"
         type="text"
+        readonly
         placeholder="Nome da carta"
-        @input="updateTextField('desiredItem', $event)"
       />
       <small v-if="errors.desiredItem">{{ errors.desiredItem }}</small>
     </label>
@@ -77,13 +127,14 @@ function validateForm() {
     <label class="field">
       <span>Telefone com WhatsApp</span>
       <input
-        :value="form.phone"
+        :value="formattedPhone"
         type="tel"
         inputmode="numeric"
         autocomplete="tel"
-        maxlength="11"
-        placeholder="11999990000"
+        maxlength="14"
+        placeholder="(11)99999-0000"
         @input="updatePhone"
+        @blur="validatePhoneOnBlur"
       />
       <small v-if="errors.phone">{{ errors.phone }}</small>
     </label>
@@ -91,7 +142,7 @@ function validateForm() {
     <button
       class="button button--primary purchase-form__submit"
       type="submit"
-      :disabled="leadsStore.isSubmitting"
+      :disabled="!canSubmit"
     >
       {{ leadsStore.isSubmitting ? "Enviando..." : "Enviar pedido" }}
     </button>
