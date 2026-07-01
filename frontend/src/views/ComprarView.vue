@@ -1,12 +1,13 @@
 <script setup>
 import { computed, watch } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import FormularioCompra from "@/components/FormularioCompra.vue";
 import figurinhas from "@/data/figurinhas.json";
 import { useLeadsStore } from "@/stores/leads";
 
 const route = useRoute();
+const router = useRouter();
 const leadsStore = useLeadsStore();
 
 const selectedFigurinha = computed(() =>
@@ -20,13 +21,19 @@ watch(
   },
   { immediate: true },
 );
+
+function goHome() {
+  router.push("/");
+}
 </script>
 
 <template>
-  <main class="purchase-page">
-    <section class="purchase-layout" aria-labelledby="purchase-title">
+  <main class="purchase-page" @click="goHome">
+    <section class="purchase-layout" aria-labelledby="purchase-title" @click.stop>
       <aside class="selected-figurinha">
-        <RouterLink class="back-link" to="/">Voltar para a coleção</RouterLink>
+        <a class="back-link" href="/" @click.prevent="goHome">
+          Voltar para a coleção
+        </a>
 
         <template v-if="selectedFigurinha">
           <img

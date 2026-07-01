@@ -1,6 +1,42 @@
 <script setup>
+import { nextTick, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
 import FigurinhaCard from "@/components/FigurinhaCard.vue";
 import figurinhas from "@/data/figurinhas.json";
+import { useLeadsStore } from "@/stores/leads";
+
+const router = useRouter();
+const leadsStore = useLeadsStore();
+
+function scrollToCollection() {
+  document
+    .querySelector("#colecao")
+    ?.scrollIntoView({ behavior: "smooth" });
+}
+
+function goToPurchase(figurinha) {
+  leadsStore.saveScrollPosition(window.scrollY);
+  router.push({
+    name: "comprar",
+    query: { item: figurinha.id },
+  });
+}
+
+onMounted(async () => {
+  const scrollPosition = leadsStore.scrollPosition;
+
+  if (scrollPosition <= 0) {
+    return;
+  }
+
+  await nextTick();
+
+  setTimeout(() => {
+    window.scrollTo({ top: scrollPosition, behavior: "instant" });
+    leadsStore.resetScrollPosition();
+  }, 50);
+});
 </script>
 
 <template>
@@ -13,7 +49,9 @@ import figurinhas from "@/data/figurinhas.json";
           Figurinhas inspiradas nos grandes nomes de The Witcher 3, selecionadas
           para quem carrega o baralho como um troféu de guerra.
         </p>
-        <a class="button button--primary" href="#colecao">Ver coleção</a>
+        <button class="button button--primary" type="button" @click="scrollToCollection">
+          Ver coleção
+        </button>
       </div>
 
       <div class="hero-section__gallery" aria-hidden="true">
@@ -37,6 +75,7 @@ import figurinhas from "@/data/figurinhas.json";
           v-for="figurinha in figurinhas"
           :key="figurinha.id"
           :figurinha="figurinha"
+          @purchase="goToPurchase"
         />
       </div>
     </section>
