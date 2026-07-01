@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from "vue";
-import { useRouter } from "vue-router";
 
 const props = defineProps({
   figurinha: {
@@ -9,7 +8,7 @@ const props = defineProps({
   },
 });
 
-const router = useRouter();
+const emit = defineEmits(["purchase"]);
 
 const rarityClass = computed(() => `rarity-${props.figurinha.raridade}`);
 
@@ -32,10 +31,7 @@ const formattedPrice = computed(() =>
 );
 
 function goToPurchase() {
-  router.push({
-    name: "comprar",
-    query: { item: props.figurinha.id },
-  });
+  emit("purchase", props.figurinha);
 }
 </script>
 
