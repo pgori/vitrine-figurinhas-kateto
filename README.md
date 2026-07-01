@@ -1,13 +1,39 @@
 # Vitrine de Figurinhas Kateto
 
-Landing page de vendas de figurinhas/cartas do universo Gwent (The Witcher 3), com backend em FastAPI, frontend em Vue 3 + Vite e banco PostgreSQL.
+Landing page fictícia de vendas de figurinhas/cartas do universo Gwent (The Witcher 3), com vitrine pública, formulário de captura de leads e área autenticada com kanban para o time de vendas.
 
-O backend expõe um endpoint de saúde e já possui a base de modelos, migrations e regra de distribuição round robin para leads.
+Todo lead enviado pelo formulário público vira automaticamente um card na coluna "Sem Contato" e recebe um vendedor por distribuição round robin entre Marcelo, Rafael, Renato, Pedro e Leonardo.
+
+## Stack
+
+- Frontend: Vue 3 + Vite + Pinia, com deploy previsto na Vercel
+- Backend: FastAPI + SQLModel/SQLAlchemy + Alembic, com deploy previsto no Railway
+- Banco de dados: PostgreSQL
+- Catálogo de figurinhas: JSON estático em `frontend/src/data/figurinhas.json`
+- Imagens: arquivos estáticos em `frontend/public/cards`
+- Orquestração local: `docker-compose.yml`
 
 ## Requisitos
 
 - Docker
 - Docker Compose
+
+## Variáveis de ambiente
+
+Use o arquivo `.env.example` como referência. Ele contém apenas valores fictícios/de desenvolvimento; não commit valores reais de produção.
+
+| Variável | Serviço | Descrição |
+| --- | --- | --- |
+| `POSTGRES_DB` | Banco | Nome do banco PostgreSQL criado pelo Docker Compose. |
+| `POSTGRES_USER` | Banco | Usuário do PostgreSQL local. |
+| `POSTGRES_PASSWORD` | Banco | Senha do PostgreSQL local. |
+| `DATABASE_URL` | Backend | String de conexão usada pelo FastAPI/Alembic. No Docker Compose, usa o hostname `db`. |
+| `VITE_API_BASE_URL` | Frontend | URL base da API consumida pelo Vue. |
+| `BACKEND_AUTH_USERNAME` | Backend | Usuário único da área autenticada. |
+| `BACKEND_AUTH_PASSWORD` | Backend | Senha do usuário único da área autenticada. |
+| `BACKEND_TOKEN_SECRET` | Backend | Segredo usado para assinar os tokens de autenticação. Em produção, deve ser forte e único. |
+| `BACKEND_TOKEN_TTL_SECONDS` | Backend | Tempo de validade do token, em segundos. |
+| `CORS_ALLOW_ORIGINS` | Backend | Lista de origens permitidas pelo CORS, separadas por vírgula. |
 
 ## Como rodar localmente
 
@@ -46,6 +72,11 @@ Sem esse rebuild, o pacote pode estar listado em `backend/requirements.txt`, mas
 
 ## Deploy
 
+URLs de produção:
+
+- Frontend (Vercel): preencher com a URL publicada no Vercel
+- Backend (Railway): preencher com a URL pública do serviço no Railway
+
 No deploy do backend, as migrations rodam automaticamente antes do servidor subir pelo start command da imagem Docker:
 
 ```bash
@@ -79,6 +110,13 @@ Resposta esperada:
 Frontend:
 
 Abra `http://localhost:5173` no navegador e confirme que a página inicial carrega.
+
+Testes automatizados do backend:
+
+```bash
+cd backend
+pytest -vv
+```
 
 Para parar os serviços:
 
