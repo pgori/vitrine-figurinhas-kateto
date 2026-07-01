@@ -16,6 +16,7 @@ export const useLeadsStore = defineStore("leads", {
     successMessage: "",
     errorMessage: "",
     createdLead: null,
+    scrollPosition: 0,
   }),
   actions: {
     setSelectedFigurinha(figurinha) {
@@ -31,6 +32,12 @@ export const useLeadsStore = defineStore("leads", {
       this.form[field] = value;
       this.successMessage = "";
       this.errorMessage = "";
+    },
+    saveScrollPosition(position) {
+      this.scrollPosition = position;
+    },
+    resetScrollPosition() {
+      this.scrollPosition = 0;
     },
     async submitLead() {
       this.isSubmitting = true;

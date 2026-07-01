@@ -302,15 +302,26 @@ h3 {
 }
 
 .purchase-page {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  width: 100%;
   min-height: 100vh;
+  margin: 0;
+  overflow-y: auto;
   padding: 2rem 0;
+  background: rgba(0, 0, 0, 0.72);
+  cursor: pointer;
 }
 
 .purchase-layout {
   display: grid;
+  width: min(1180px, calc(100% - 2rem));
   min-height: calc(100vh - 4rem);
   align-items: center;
   gap: 1.5rem;
+  margin: 0 auto;
+  cursor: default;
 }
 
 .selected-figurinha,
